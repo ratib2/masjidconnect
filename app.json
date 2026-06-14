@@ -25,7 +25,7 @@
         "backgroundColor": "#0f6e56"
       },
       "package": "com.salat.masjidconnect",
-      "versionCode": 9,
+      "versionCode": 10,
       "permissions": [
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION",

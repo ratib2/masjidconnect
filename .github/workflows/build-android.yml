@@ -38,6 +38,16 @@ jobs:
         env:
           EXPO_NO_GIT_STATUS: 1
 
+      - name: Patch build.gradle for SDK 35 and 16kB pages
+        run: |
+          # Set compileSdk and targetSdk to 35
+          sed -i 's/compileSdkVersion = Integer.parseInt(findProperty.*)/compileSdkVersion = 35/' android/app/build.gradle
+          sed -i 's/targetSdkVersion = Integer.parseInt(findProperty.*)/targetSdkVersion = 35/' android/app/build.gradle
+          sed -i 's/compileSdk [0-9]*/compileSdk 35/' android/app/build.gradle
+          sed -i 's/targetSdk [0-9]*/targetSdk 35/' android/app/build.gradle
+          # Add 16kB page size support
+          sed -i '/defaultConfig {/a\            externalNativeBuild { cmake { arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON" } }' android/app/build.gradle
+
       - name: Copy Keystore
         run: cp $GITHUB_WORKSPACE/masjidconnect.keystore $GITHUB_WORKSPACE/android/app/masjidconnect.keystore
 

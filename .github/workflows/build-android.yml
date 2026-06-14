@@ -42,20 +42,28 @@ jobs:
         run: |
           node -e "
           const fs = require('fs');
-          let g = fs.readFileSync('android/app/build.gradle', 'utf8');
-          // Fix compileSdkVersion and targetSdkVersion to 35
-          g = g.replace(/compileSdkVersion\s*=\s*Integer\.parseInt\([^)]+\)/g, 'compileSdkVersion = 35');
-          g = g.replace(/targetSdkVersion\s*=\s*Integer\.parseInt\([^)]+\)/g, 'targetSdkVersion = 35');
-          g = g.replace(/compileSdk\s+\d+/g, 'compileSdk 35');
-          g = g.replace(/targetSdk\s+\d+/g, 'targetSdk 35');
-          // Add 16kB page size support in packagingOptions
-          if (!g.includes('useLegacyPackaging')) {
-            g = g.replace(/android\s*\{/, 'android {\n    packagingOptions {\n        jniLibs.useLegacyPackaging = false\n    }');
-          }
-          fs.writeFileSync('android/app/build.gradle', g);
-          console.log('build.gradle patched');
+
+          // Patch ROOT android/build.gradle (sets ext vars used by app/build.gradle)
+          let root = fs.readFileSync('android/build.gradle', 'utf8');
+          root = root.replace(/compileSdkVersion\s*=\s*\d+/g, 'compileSdkVersion = 35');
+          root = root.replace(/targetSdkVersion\s*=\s*\d+/g, 'targetSdkVersion = 35');
+          root = root.replace(/ndkVersion\s*=\s*\"[^\"]+\"/g, 'ndkVersion = \"27.2.12479018\"');
+          fs.writeFileSync('android/build.gradle', root);
+          console.log('Root build.gradle patched');
+
+          // Patch android/app/build.gradle
+          let app = fs.readFileSync('android/app/build.gradle', 'utf8');
+          app = app.replace(/compileSdkVersion\s*=\s*Integer\.parseInt\([^)]+\)/g, 'compileSdkVersion = 35');
+          app = app.replace(/targetSdkVersion\s*=\s*Integer\.parseInt\([^)]+\)/g, 'targetSdkVersion = 35');
+          app = app.replace(/compileSdk\s+\d+/g, 'compileSdk 35');
+          app = app.replace(/targetSdk\s+\d+/g, 'targetSdk 35');
+          fs.writeFileSync('android/app/build.gradle', app);
+          console.log('App build.gradle patched');
           "
-          grep -n "compileSdk\|targetSdk\|useLegacyPackaging" android/app/build.gradle
+          echo "=== Root build.gradle SDK lines ==="
+          grep -n "compileSdkVersion\|targetSdkVersion\|ndkVersion" android/build.gradle || true
+          echo "=== App build.gradle SDK lines ==="
+          grep -n "compileSdk\|targetSdk" android/app/build.gradle || true
 
       - name: Copy Keystore
         run: cp $GITHUB_WORKSPACE/masjidconnect.keystore $GITHUB_WORKSPACE/android/app/masjidconnect.keystore

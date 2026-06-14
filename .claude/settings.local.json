@@ -5,7 +5,11 @@
       "WebFetch(domain:github.com)",
       "Bash(npm --version)",
       "Bash(npx expo *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(ls \"C:\\\\Users\\\\dimar\\\\AppData\\\\Local\\\\Android\\\\Sdk\" 2>/dev/null || echo \"NON TROVATO\")",
+      "PowerShell([Convert]::ToBase64String\\([IO.File]::ReadAllBytes\\(\"D:\\\\MasjidConnect\\\\masjidconnect.keystore\"\\)\\))",
+      "Bash(git remote *)",
+      "PowerShell(New-Item -ItemType Directory -Force \"D:\\\\MasjidConnect\\\\.github\\\\workflows\")"
     ]
   }
 }

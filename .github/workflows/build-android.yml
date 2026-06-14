@@ -35,9 +35,8 @@ jobs:
         env:
           EXPO_NO_GIT_STATUS: 1
 
-      - name: Decode Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > $GITHUB_WORKSPACE/android/app/masjidconnect.keystore
+      - name: Copy Keystore
+        run: cp $GITHUB_WORKSPACE/masjidconnect.keystore $GITHUB_WORKSPACE/android/app/masjidconnect.keystore
 
       - name: Build release AAB
         run: |
